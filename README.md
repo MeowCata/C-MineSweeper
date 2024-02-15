@@ -865,5 +865,7 @@ int main(){
 **Github开源地址：[这里](https://github.com/MeowCata/C-MineE/blob/main/MineE.cpp)，上不去的同学试试`FastGithub`**
 
 这个md文件是我从CSDN复制过来的，Github对代码的排版有些问题，各位去CSDN看吧
- 
+
+感谢**胡老师**在我coding过程中给予的帮助和指导
+
 **非常欢迎各位大佬指点**
