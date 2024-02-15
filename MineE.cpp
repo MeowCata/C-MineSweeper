@@ -80,12 +80,12 @@ int main(){
 	}*/
 	
 	while(true){
-		/*for(int i=1;i<=row;i++){
+		for(int i=1;i<=row;i++){
 			for(int j=1;j<=col;j++){
 				cout<<ui[i][j]<<' '; //output the numbers
 			}
 			cout<<endl;
-		}cout<<endl; */
+		}cout<<endl; 
 	//for debug
 	
 		for(int i=1;i<=row;i++){
@@ -177,10 +177,17 @@ int main(){
 		else if(op=='a'){
 			firstClick=false;
 			cout<<"ai-mode enabled"<<endl;
-			cout<<"looking for mines in: "<<x<<'x'<<y<<endl; 
+			int x1,y1;
+			cout<<"start-point coordinates have been entered\n please enter the end-point coordinates\n";
+			cin>>x1>>y1; //input judging
+			while(x1<=0||y1<=0||x1>row||y1>col){
+				cout<<"invalid input\n";
+				cin>>x1>>y1;
+			}
+			cout<<"looking for mines in: "<<'('<<x<<','<<y<<')'<<'('<<x1<<','<<y1<<')'<<endl; 
 			int new_mine=0;
-			for(int i=1;i<=x;i++){
-				for(int j=1;j<=y;j++){
+			for(int i=x;i<=x1;i++){
+				for(int j=y;j<=y1;j++){
 					if(ui[i][j]==9){
 						k++;
 						k1++;
@@ -201,8 +208,8 @@ int main(){
 				cout<<"outputting..."<<'\n';
 				Sleep(1000);
 				system("cls");
-				for(int i=1;i<=x;i++){
-					for(int j=1;j<=y;j++){
+				for(int i=x;i<=x1;i++){
+					for(int j=y;j<=y1;j++){
 						cout<<ui[i][j]<<' ';
 					}cout<<endl;
 				}cout<<endl;
