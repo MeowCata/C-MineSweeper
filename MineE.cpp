@@ -1,5 +1,5 @@
 //Made by DingDang 2024-2
-//AntiCheat: GrimAC v7~
+//AntiCheat: Grim v7~
 //UTF-8 Coding
 //Compile Mode:C++11 or higher version System: Win7+ 64x
 #include<bits/stdc++.h>
