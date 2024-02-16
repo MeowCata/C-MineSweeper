@@ -6,6 +6,7 @@ made by *DingDang* & **open source**
 > [!IMPORTANT]
 > **编译/运行环境：`C++11/Windows7+`**
 
+> [!NOTE]
 > Dev-Cpp 5.1.1 is supported
 
 ### 玩法介绍
