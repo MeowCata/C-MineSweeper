@@ -23,10 +23,10 @@ made by *DingDang* & **open source**
 ### My CSDN blog: [点这里](https://blog.csdn.net/weixin_45122104/article/details/128066651)
 
 info：
-![GitHub repo size](https://img.shields.io/github/repo-size/Ad-closeNN/Survive618)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/t/Ad-closeNN/Survive618)
-![GitHub last commit](https://img.shields.io/github/last-commit/Ad-closeNN/Survive618)
-![GitHub Repo stars](https://img.shields.io/github/stars/Ad-closeNN/Survive618?style=flat)
-![GitHub forks](https://img.shields.io/github/forks/Ad-closeNN/Survive618?style=flat)
+![GitHub repo size](https://img.shields.io/github/repo-size/MeowCata/C-MineE)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/t/MeowCata/C-MineE)
+![GitHub last commit](https://img.shields.io/github/last-commit/MeowCata/C-MineE)
+![GitHub Repo stars](https://img.shields.io/github/stars/MeowCata/C-MineE?style=flat)
+![GitHub forks](https://img.shields.io/github/forks/MeowCata/C-MineE?style=flat)
 
 [![Star History Chart](https://api.star-history.com/svg?repos=MeowCata/C-MineE&type=Date)](https://star-history.com/#MeowCata/C-MineE&Date)
