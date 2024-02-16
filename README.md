@@ -20,7 +20,7 @@ made by *DingDang* & **open source**
 * ²：![coord](https://img-blog.csdnimg.cn/direct/899bc02062d245639fc235477886e354.png)
 * ³：`见上方a x y处`
 
-**My CSDN blog: [点这里](https://blog.csdn.net/weixin_45122104/article/details/128066651)**
+### My CSDN blog: [点这里](https://blog.csdn.net/weixin_45122104/article/details/128066651)
 
 info：
 ![GitHub repo size](https://img.shields.io/github/repo-size/Ad-closeNN/Survive618)
