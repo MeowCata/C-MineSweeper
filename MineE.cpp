@@ -1,5 +1,4 @@
 //Made by DingDang 2024-2
-//AntiCheat: Grim v7~
 //UTF-8 Coding
 //Compile Mode:C++11 or higher version System: Win7+ 64x
 #include<bits/stdc++.h>
@@ -32,7 +31,7 @@ int main(){
 	//system("color 1B");
 	system("title MineSweeper");//set window title
 	system("mode con cols=50 lines=30");//set window size
-	system("echo [console]variate initialization succeeded");
+	system("echo [console]variables initialization succeeded");
 	cout<<"inputting|format:<ROW> <COL> <HEALTH> <MINE_SUM>]\n";
 	cout<<"example: 10 10 3 10\n";
 	
@@ -44,6 +43,12 @@ int main(){
 			cout<<"failed to process data, please reset map size/health/mine_sum\n";
 			cin>>row>>col>>lives>>mine_sum;
 	}
+	cout<<"generating map...\n";
+	for(int i=0;i<=100;i+=10){
+		cout<<i<<"%... ";
+		Sleep(random(700));
+	}
+	cout<<'\n'<<'\n';
 	int tempCalc=mine_sum;
 	while(mine_sum){
 		int x=random(row);//a+rand()%b = [a, a+b-1]
@@ -80,12 +85,12 @@ int main(){
 	}*/
 	
 	while(true){
-		for(int i=1;i<=row;i++){
+		/*for(int i=1;i<=row;i++){
 			for(int j=1;j<=col;j++){
 				cout<<ui[i][j]<<' '; //output the numbers
 			}
 			cout<<endl;
-		}cout<<endl; 
+		}cout<<endl; */
 	//for debug
 	
 		for(int i=1;i<=row;i++){
@@ -109,6 +114,7 @@ int main(){
 			cout<<"invalid input number"<<endl;
 			cin>>op>>x>>y;continue;
 		}
+		
 		
 		if(op=='q'){
 			if(ui[x][y]==9){//losing
@@ -177,17 +183,10 @@ int main(){
 		else if(op=='a'){
 			firstClick=false;
 			cout<<"ai-mode enabled"<<endl;
-			int x1,y1;
-			cout<<"start-point coordinates have been entered\n please enter the end-point coordinates\n";
-			cin>>x1>>y1; //input judging
-			while(x1<=0||y1<=0||x1>row||y1>col){
-				cout<<"invalid input\n";
-				cin>>x1>>y1;
-			}
-			cout<<"looking for mines in: "<<'('<<x<<','<<y<<')'<<'('<<x1<<','<<y1<<')'<<endl; 
+			cout<<"looking for mines in: "<<'('<<x<<','<<y<<')'<<endl; 
 			int new_mine=0;
-			for(int i=x;i<=x1;i++){
-				for(int j=y;j<=y1;j++){
+			for(int i=1;i<=x;i++){
+				for(int j=1;j<=y;j++){
 					if(ui[i][j]==9){
 						k++;
 						k1++;
@@ -208,8 +207,8 @@ int main(){
 				cout<<"outputting..."<<'\n';
 				Sleep(1000);
 				system("cls");
-				for(int i=x;i<=x1;i++){
-					for(int j=y;j<=y1;j++){
+				for(int i=1;i<=x;i++){
+					for(int j=1;j<=y;j++){
 						cout<<ui[i][j]<<' ';
 					}cout<<endl;
 				}cout<<endl;
