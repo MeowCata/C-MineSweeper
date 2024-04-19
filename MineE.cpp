@@ -85,12 +85,12 @@ int main(){
 	}*/
 	
 	while(true){
-		/*for(int i=1;i<=row;i++){
+		for(int i=1;i<=row;i++){
 			for(int j=1;j<=col;j++){
 				cout<<ui[i][j]<<' '; //output the numbers
 			}
 			cout<<endl;
-		}cout<<endl; */
+		}cout<<endl; 
 	//for debug
 	
 		for(int i=1;i<=row;i++){
@@ -122,22 +122,23 @@ int main(){
 				if(firstClick){
 					firstClick=false;
 					b[x][y]=2;
+					k++;k1++;
 					continue;
+				}else{
+					if(b[x][y]==2) continue;//anti-blood on a flag
+					lives--;
+					system("color 47");
+					cout<<"oops! you just clicked a mine"<<endl<<endl;
+					Sleep(200);
+					system("color 07");
+					if(lives==0){
+						cout<<"You Lose!";
+						return 0;
+					}
+					//auto-flag after one death
+					b[x][y]=2;
+					k++;k1++;
 				}
-				if(b[x][y]==2) continue;//anti-blood on a flag
-				lives--;
-				system("color 47");
-				cout<<"oops! you just clicked a mine"<<endl<<endl;
-				Sleep(200);
-				system("color 07");
-				if(lives==0){
-					cout<<"You Lose!";
-					return 0;
-				}
-				b[x][y]=2;//auto-flag after one death
-				continue;
-				scanf("%d");
-				return 0;
 			}
 			else{
 				firstClick=false;
