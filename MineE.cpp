@@ -46,7 +46,7 @@ int main(){
 	cout<<"generating map...\n";
 	for(int i=0;i<=100;i+=10){
 		cout<<i<<"%... ";
-		Sleep(random(700));
+		Sleep(random(row*col*7));
 	}
 	cout<<'\n'<<'\n';
 	int tempCalc=mine_sum;
@@ -85,12 +85,12 @@ int main(){
 	}*/
 	
 	while(true){
-		for(int i=1;i<=row;i++){
+		/*for(int i=1;i<=row;i++){
 			for(int j=1;j<=col;j++){
 				cout<<ui[i][j]<<' '; //output the numbers
 			}
 			cout<<endl;
-		}cout<<endl; 
+		}cout<<endl; */
 	//for debug
 	
 		for(int i=1;i<=row;i++){
