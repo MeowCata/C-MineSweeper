@@ -9,6 +9,9 @@ made by *DingDang* & **open source**
 > [!NOTE]
 > Dev-Cpp 5.1.1 is supported
 
+> [!IMPORTANT]
+> 机房开了网络却没有游戏玩？就玩这个！下载站：[flippedcloud.github.io](https://flippedcloud.github.io)
+
 ### 玩法介绍
 * 程序会提示输入：`<ROW> <COL> <HEALTH> <MINE_SUM>`，分别代表行数，列数（均小于等于30），生命值（小于行数×列数），雷数（小于行数×列数），有数据判断
 * 操作符 **`q p c a`** +`X,Y`分别代表：在 **(x,y)** ²(见注释)  翻开/插旗/撤销插旗/使用Ai（作为起始点）³，以下为详细介绍
