@@ -32,7 +32,7 @@ int main(){
 	system("title MineSweeper");//set window title
 	system("mode con cols=50 lines=30");//set window size
 	system("echo [console]variables initialization succeeded");
-	cout<<"inputting|format:<ROW> <COL> <HEALTH> <MINE_SUM>]\n";
+	cout<<"inputting|format:<ROW> <COL> <HEALTH> <MINE_SUM>]\n";//col width row height
 	cout<<"example: 10 10 3 10\n";
 	
 	cin>>row>>col>>lives>>mine_sum;
@@ -44,9 +44,17 @@ int main(){
 			cin>>row>>col>>lives>>mine_sum;
 	}
 	cout<<"generating map...\n";
-	for(int i=0;i<=100;i+=10){
+	/*for(int i=0;i<=100;i+=10){
 		cout<<i<<"%... ";
 		Sleep(random(row*col*7));
+	}*/
+	for(int i=1;i<=10;i++){
+		int x=i;
+		cout<<"[";
+		for(int j=1;j<=x;j++) cout<<"*";
+		for(int g=1;g<=(10-x);g++) cout<<' ';
+		cout<<"] "<<x*10<<"%"<<'\n';
+		Sleep(random(row*col*3));
 	}
 	cout<<'\n'<<'\n';
 	int tempCalc=mine_sum;
@@ -189,9 +197,8 @@ int main(){
 			for(int i=1;i<=x;i++){
 				for(int j=1;j<=y;j++){
 					if(ui[i][j]==9){
-						k++;
-						k1++;
 						if(b[i][j]!=2){
+							k++;k1++;
 							b[i][j]=2;
 							new_mine++;
 						}
