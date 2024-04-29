@@ -20,20 +20,36 @@ Operator description:
 */
 using namespace std;
 
+void print(string s){ //100% created originally
+	//getline(cin,s);
+	char ch[s.size()];
+	for(int i=0;i<s.size();i++) ch[i]=s[i];
+	for(int i=0;i<s.size();i++){
+		cout<<ch[i];
+		Sleep(70);
+	} 	
+}
+
 int ui[105][105]={0},b[105][105]={0}; 
 int lives,mine_sum;
 bool firstClick=true;
 int row,col;
 int k=0,k1=0;
-	
+string name;
+
 int main(){
 	srand(time(NULL)); //random seed
 	//system("color 1B");
 	system("title MineSweeper");//set window title
-	system("mode con cols=50 lines=30");//set window size
+	//system("mode con cols=50 lines=30");//set window size
 	system("echo [console]variables initialization succeeded");
-	cout<<"inputting|format:<ROW> <COL> <HEALTH> <MINE_SUM>]\n";//col width row height
-	cout<<"example: 10 10 3 10\n";
+	cout<<"Set an username:";
+	getline(cin,name);
+	print("Hello, "+name+"!");
+	cout<<'\n';
+	Sleep(200);
+	cout<<"inputting|format:<ROW> <COL> <HEALTH> <MINE_SUM>\n";//col width row height
+	print("example: 10 10 3 10");cout<<'\n';
 	
 	cin>>row>>col>>lives>>mine_sum;
 	
@@ -43,7 +59,7 @@ int main(){
 			cout<<"failed to process data, please reset map size/health/mine_sum\n";
 			cin>>row>>col>>lives>>mine_sum;
 	}
-	cout<<"generating map...\n";
+	print("generating map...");cout<<'\n';
 	/*for(int i=0;i<=100;i+=10){
 		cout<<i<<"%... ";
 		Sleep(random(row*col*7));
@@ -136,11 +152,11 @@ int main(){
 					if(b[x][y]==2) continue;//anti-blood on a flag
 					lives--;
 					system("color 47");
-					cout<<"oops! you just clicked a mine"<<endl<<endl;
+					print("oops! you just clicked a mine");cout<<endl<<endl;
 					Sleep(200);
 					system("color 07");
 					if(lives==0){
-						cout<<"You Lose!";
+						print("You Lose!");
 						return 0;
 					}
 					//auto-flag after one death
@@ -191,7 +207,7 @@ int main(){
 		}
 		else if(op=='a'){
 			firstClick=false;
-			cout<<"ai-mode enabled"<<endl;
+			print("ai-mode enabled");cout<<'\n';
 			cout<<"looking for mines in: "<<'('<<x<<','<<y<<')'<<endl; 
 			int new_mine=0;
 			for(int i=1;i<=x;i++){
@@ -225,10 +241,10 @@ int main(){
 			Sleep(1500);
 			cout<<endl;
 		}else{
-			cout<<"invalid operator\n";continue;
+			print("invalid operator");cout<<'\n';continue;
 		}
 		if(k==tempCalc && k==k1){//winning
-			cout<<"You Win !";
+			print("You Win!");
 			for(int i=1;i<=5;i++){
 				system("color 1a");
 				Sleep(100);
