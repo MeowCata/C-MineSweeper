@@ -35,7 +35,6 @@ int lives,mine_sum;
 bool firstClick=true;
 int row,col;
 int k=0,k1=0;
-string name;
 
 int main(){
 	srand(time(NULL)); //random seed
@@ -43,9 +42,6 @@ int main(){
 	system("title MineSweeper");//set window title
 	//system("mode con cols=50 lines=30");//set window size
 	system("echo [console]variables initialization succeeded");
-	cout<<"Set an username:";
-	getline(cin,name);
-	print("Hello, "+name+"!");
 	cout<<'\n';
 	Sleep(200);
 	cout<<"inputting|format:<ROW> <COL> <HEALTH> <MINE_SUM>\n";//col width row height
@@ -240,12 +236,19 @@ int main(){
 			}
 			Sleep(1500);
 			cout<<endl;
+		}else if(op=='h'){
+			firstClick=false;
+			for(int i=1;i<=x;i++){
+				for(int j=1;j<=y;j++){
+					cout<<ui[i][j]<<' ';
+				}cout<<endl;
+			}	
 		}else{
 			print("invalid operator");cout<<'\n';continue;
 		}
 		if(k==tempCalc && k==k1){//winning
 			print("You Win!");
-			for(int i=1;i<=5;i++){
+			for(int i=1;i<=2;i++){
 				system("color 1a");
 				Sleep(100);
 				system("color 2b");
