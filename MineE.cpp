@@ -44,7 +44,7 @@ int main(){
 	system("echo [console]variables initialization succeeded");
 	cout<<'\n';
 	Sleep(200);
-	cout<<"inputting|format:<ROW> <COL> <HEALTH> <MINE_SUM>\n";//col width row height
+	cout<<"inputting|format:<HEIGHT> <WIDTH> <HEALTH> <MINE_SUM>\n";//col width row height
 	print("example: 10 10 3 10");cout<<'\n';
 	
 	cin>>row>>col>>lives>>mine_sum;
@@ -242,7 +242,7 @@ int main(){
 				for(int j=1;j<=y;j++){
 					cout<<ui[i][j]<<' ';
 				}cout<<endl;
-			}	
+			}cout<<'\n';	
 		}else{
 			print("invalid operator");cout<<'\n';continue;
 		}
