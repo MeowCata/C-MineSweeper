@@ -2,7 +2,6 @@
 //UTF-8 Coding
 //Compile Mode:C++11 or higher version System: Win7+ 64x
 //#include<bits/stdc++.h>
-#include "windows.h" //for Windows-Client
 
 #include <iostream>
 #include <cstdlib>
