@@ -7,7 +7,7 @@ made by *DingDang* & **open source**
 > **编译/运行环境：`C++11/Windows7+`**
 
 > [!NOTE]
-> Dev-Cpp 5.1.1 is supported
+> Dev-Cpp 5.11 is supported
 
 > [!IMPORTANT]
 > 机房开了网络却没有游戏玩？就玩这个！下载站：[flippedcloud.github.io](https://flippedcloud.github.io)
