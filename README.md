@@ -30,6 +30,15 @@ made by *DingDang* & **open source**
 
 ### My CSDN blog: [点这里](https://blog.csdn.net/weixin_45122104/article/details/128066651)
 
+Includes:
+```cpp
+#include <iostream>
+#include <cstdlib>
+#include <windows.h>
+#include <ctime>
+#include <iomanip>
+#include <cctype>
+```
 info：
 ![GitHub repo size](https://img.shields.io/github/repo-size/MeowCata/C-MineE)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/MeowCata/C-MineE)
