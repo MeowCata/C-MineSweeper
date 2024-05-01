@@ -11,6 +11,8 @@ made by *DingDang* & **open source**
 
 > [!IMPORTANT]
 > 机房开了网络却没有游戏玩？就玩这个！下载站：[flippedcloud.github.io](https://flippedcloud.github.io)
+> 
+> 下载站源码：[Here](https://github.com/FlippedCloud/flippedcloud.github.io)
 
 ### 玩法介绍
 * 程序会提示输入：`<ROW> <COL> <HEALTH> <MINE_SUM>`，分别代表行数，列数（均小于等于30），生命值（小于行数×列数），雷数（小于行数×列数），有数据判断
