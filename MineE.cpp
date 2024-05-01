@@ -9,6 +9,7 @@
 #include <ctime>
 #include <iomanip>
 #include <cctype>
+#include <string>
 
 #define random(x) 1+rand()%(x)
 /*
@@ -23,11 +24,11 @@ using namespace std;
 
 void print(string s){ //100% created originally
 	//getline(cin,s);
-	char ch[s.size()];
+	char ch[sizeof(s)];
 	for(int i=0;i<s.size();i++) ch[i]=s[i];
 	for(int i=0;i<s.size();i++){
 		cout<<ch[i];
-		Sleep(70);
+		//Sleep(70);
 	} 	
 }
 
@@ -65,7 +66,7 @@ int main(){
 			cout<<"failed to process data, please reset map size/health/mine_sum\n";
 			cin>>row>>col>>lives>>mine_sum;
 	}
-	print("generating map...");cout<<'\n';
+	print("generating map...");cout<<endl;
 	/*for(int i=0;i<=100;i+=10){
 		cout<<i<<"%... ";
 		Sleep(random(row*col*7));
@@ -274,7 +275,7 @@ int main(){
 				system("color 5e");
 			}
 			system("color 07");
-			scanf("%d");
+			scanf_s("%d");
 		}
 	}
     return 0;
