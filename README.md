@@ -2,6 +2,7 @@
 A minesweeper game based on C++
 
 made by *DingDang* & **open source**
+感谢 **[FZ](https://github.com/Hi-Kite)** 对项目的贡献
 
 > [!IMPORTANT]
 > **编译/运行环境：`C++11/Windows7+`**
