@@ -1,15 +1,16 @@
 //Made by DingDang 2024-2
 //UTF-8 Coding
 //Compile Mode:C++11 or higher version System: Win7+ 64x
-#include<bits/stdc++.h>
+//#include<bits/stdc++.h>
 #include "windows.h" //for Windows-Client
-/*
+
 #include <iostream>
 #include <cstdlib>
 #include <windows.h>
 #include <ctime>
 #include <iomanip>
-*/
+#include <cctype>
+
 #define random(x) 1+rand()%(x)
 /*
 Operator description:
@@ -17,6 +18,7 @@ Operator description:
 2, p indicates that the flag is planted at the coordinates (the coordinates of the user are thunder)
 3, c means cancel the flag at the coordinate (if any)
 4. a indicates ai automatic demining, and the last two coordinates indicate Ai demining range
+5, h means hacker-mode, it shows the array behind the # symbols
 */
 using namespace std;
 
@@ -28,6 +30,15 @@ void print(string s){ //100% created originally
 		cout<<ch[i];
 		Sleep(70);
 	} 	
+}
+
+bool isNumber(string str) {
+    for (char c:str) {
+        if (!isdigit(c)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 int ui[105][105]={0},b[105][105]={0}; 
@@ -51,7 +62,7 @@ int main(){
 	
 	while(row>=30||row<=0||col>=30||col<=0||
 		lives>=(row*col)||lives==0||
-		mine_sum>=(row*col)||mine_sum<=0){ //judge input data
+		mine_sum>=(row*col)||mine_sum<=0||mine_sum==1){ //judge input data
 			cout<<"failed to process data, please reset map size/health/mine_sum\n";
 			cin>>row>>col>>lives>>mine_sum;
 	}
@@ -126,15 +137,19 @@ int main(){
 			//Judge the status of the grid (opened, closed, flag 
 		}
 		cout<<"Lives: "<<lives<<'\n';
-		char op;//input operator
+		char op; // input operator
 		cin>>op;
+		//cout<<"number input\n";
+		string x1,y1;
+		cin>>x1;cin>>y1;
 		int x,y;//input coord
-		cin>>x>>y;
-		while(x>row||y>col){
-			cout<<"invalid input number"<<endl;
-			cin>>op>>x>>y;continue;
+		while(!isNumber(x1) || !isNumber(y1) || 
+				(op != 'a' && op != 'q' && op != 'h' && op != 'c' && op != 'p')||
+				stoi(x1)<=0||stoi(y1)<=0){
+			print("invalid op/number input");cout<<'\n';
+			cin>>op>>x1>>y1; 
 		}
-		
+		x=stoi(x1);y=stoi(y1); //stof -> float | stoi -> int
 		
 		if(op=='q'){
 			if(ui[x][y]==9){//losing
@@ -250,13 +265,13 @@ int main(){
 			print("You Win!");
 			for(int i=1;i<=2;i++){
 				system("color 1a");
-				Sleep(100);
+				Sleep(200);
 				system("color 2b");
-				Sleep(100);
+				Sleep(200);
 				system("color 3c");
-				Sleep(100);
+				Sleep(200);
 				system("color 4d");
-				Sleep(100);
+				Sleep(200);
 				system("color 5e");
 			}
 			system("color 07");
