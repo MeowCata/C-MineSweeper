@@ -10,6 +10,13 @@
 #include <iomanip>
 #include <cctype>
 #include <string>
+//#include <unistd.h>
+
+#if _WIN32 || WIN32 //thanks to FZ
+    #define platform "1"
+#elif __linux__
+    #define platform "2"
+#endif
 
 #define random(x) 1+rand()%(x)
 /*
@@ -24,17 +31,17 @@ using namespace std;
 
 void print(string s){ //100% created originally
 	//getline(cin,s);
-	char ch[sizeof(s)];
+	char ch[s.length()]; //.size() runs strangely on <SVC
 	for(int i=0;i<s.size();i++) ch[i]=s[i];
 	for(int i=0;i<s.size();i++){
 		cout<<ch[i];
-		//Sleep(70);
+		Sleep(70);
 	} 	
 }
 
 bool isNumber(string str) {
-    for (char c:str) {
-        if (!isdigit(c)) {
+    for(char c:str) {
+        if(!isdigit(c)) {
             return false;
         }
     }
@@ -48,6 +55,13 @@ int row,col;
 int k=0,k1=0;
 
 int main(){
+	cout<<"Working on ";
+	if(platform=="1"){
+        cout<<"Windows"<<endl;
+    }
+    else if(platform=="2"){
+        cout<<"Linux"<<endl;
+    }
 	srand(time(NULL)); //random seed
 	//system("color 1B");
 	system("title MineSweeper");//set window title
@@ -72,11 +86,10 @@ int main(){
 		Sleep(random(row*col*7));
 	}*/
 	for(int i=1;i<=10;i++){
-		int x=i;
 		cout<<"[";
-		for(int j=1;j<=x;j++) cout<<"*";
-		for(int g=1;g<=(10-x);g++) cout<<' ';
-		cout<<"] "<<x*10<<"%"<<'\n';
+		for(int j=1;j<=i;j++) cout<<"*";
+		for(int g=1;g<=(10-i);g++) cout<<' ';
+		cout<<"] "<<i*10<<"%"<<'\n';
 		Sleep(random(row*col*3));
 	}
 	cout<<'\n'<<'\n';
@@ -275,7 +288,8 @@ int main(){
 				system("color 5e");
 			}
 			system("color 07");
-			scanf_s("%d");
+			string end;cin>>end;
+			break;
 		}
 	}
     return 0;
