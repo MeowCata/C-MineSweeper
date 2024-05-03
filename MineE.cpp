@@ -13,9 +13,9 @@
 //#include <unistd.h>
 
 #if _WIN32 || WIN32 //thanks to FZ
-    #define platform "1"
+    #define platform "w"
 #elif __linux__
-    #define platform "2"
+    #define platform "l"
 #endif
 
 #define random(x) 1+rand()%(x)
@@ -31,7 +31,7 @@ using namespace std;
 
 void print(string s){ //100% created originally
 	//getline(cin,s);
-	char ch[s.length()]; //.size() runs strangely on <SVC
+	char ch[s.size()];
 	for(int i=0;i<s.size();i++) ch[i]=s[i];
 	for(int i=0;i<s.size();i++){
 		cout<<ch[i];
@@ -56,22 +56,25 @@ int k=0,k1=0;
 
 int main(){
 	cout<<"Working on ";
-	if(platform=="1"){
+	if(platform=="w"){
         cout<<"Windows"<<endl;
     }
-    else if(platform=="2"){
+    else if(platform=="l"){
         cout<<"Linux"<<endl;
+    }
+	if(sizeof(void*)==4) {
+        cout<<"32-bit Windows"<<endl;
+    }else if(sizeof(void*)==8) {
+        cout<<"64-bit Windows"<<endl;
     }
 	srand(time(NULL)); //random seed
 	//system("color 1B");
-	system("title MineSweeper");//set window title
+	//system("title MineSweeper");//set window title
 	//system("mode con cols=50 lines=30");//set window size
-	system("echo [console]variables initialization succeeded");
+	//system("echo [console]variables initialization succeeded");
 	cout<<'\n';
 	Sleep(200);
 	cout<<"inputting|format:<HEIGHT> <WIDTH> <HEALTH> <MINE_SUM>\n";//col width row height
-	print("example: 10 10 3 10");cout<<'\n';
-	
 	cin>>row>>col>>lives>>mine_sum;
 	
 	while(row>=30||row<=0||col>=30||col<=0||
@@ -120,14 +123,7 @@ int main(){
 			}
 		}
 	}
-	
-	/*for(int i=1;i<=10;i++){
-		for(int j=1;j<=10;j++){
-			cout<<ui[i][j]<<' '; //output the numbers
-		}
-		cout<<endl;
-	}*/
-	
+
 	while(true){
 		/*for(int i=1;i<=row;i++){
 			for(int j=1;j<=col;j++){
@@ -166,7 +162,7 @@ int main(){
 		
 		if(op=='q'){
 			if(ui[x][y]==9){//losing
-				system("cls");
+				//system("cls");
 				if(firstClick){
 					firstClick=false;
 					b[x][y]=2;
@@ -175,10 +171,10 @@ int main(){
 				}else{
 					if(b[x][y]==2) continue;//anti-blood on a flag
 					lives--;
-					system("color 47");
+					//system("color 47");
 					print("oops! you just clicked a mine");cout<<endl<<endl;
 					Sleep(200);
-					system("color 07");
+					//system("color 07");
 					if(lives==0){
 						print("You Lose!");
 						return 0;
@@ -190,7 +186,7 @@ int main(){
 			}
 			else{
 				firstClick=false;
-				system("cls");
+				//system("cls");
 				b[x][y]=1;
 				if(b[x][y]==1&&ui[x][y]==0){
 					if(ui[x-1][y-1]==0) b[x-1][y-1]=1;
@@ -209,7 +205,7 @@ int main(){
 		else if(op=='p'){//flagging
 			firstClick=false; //k stores the correct location of the mine (objective),
 			  			      //k1 is the user's marking location (subjective); Function: Store the total number of mines
-			system("cls"); 
+			//system("cls"); 
 			k1++;
 		 	if(ui[x][y]==9){
 				k++;
@@ -217,7 +213,7 @@ int main(){
 			b[x][y]=2;
 		}
 		else if(op=='c'){//unflagging 
-			system("cls");
+			//system("cls");
 			if(b[x][y]==2){
 				k1--;
 				if(ui[x][y]==9){
@@ -225,7 +221,7 @@ int main(){
 				}
 			b[x][y]=0;
 			}else{
-				system("cls");
+				//system("cls");
 				continue;
 			}
 		}
@@ -254,7 +250,7 @@ int main(){
 			if(ans=='y'){
 				cout<<"outputting..."<<'\n';
 				Sleep(1000);
-				system("cls");
+				//system("cls");
 				for(int i=1;i<=x;i++){
 					for(int j=1;j<=y;j++){
 						cout<<ui[i][j]<<' ';
@@ -276,7 +272,7 @@ int main(){
 		}
 		if(k==tempCalc && k==k1){//winning
 			print("You Win!");
-			for(int i=1;i<=2;i++){
+			/*for(int i=1;i<=2;i++){
 				system("color 1a");
 				Sleep(200);
 				system("color 2b");
@@ -287,7 +283,7 @@ int main(){
 				Sleep(200);
 				system("color 5e");
 			}
-			system("color 07");
+			system("color 07");*/
 			string end;cin>>end;
 			break;
 		}
