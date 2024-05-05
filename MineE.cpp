@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <cctype>
 #include <string>
+#include <random>
 //#include <unistd.h>
 
 #if _WIN32 || WIN32 //thanks to Hi-Kite
@@ -47,11 +48,24 @@ bool isNumber(string str){
     return true;
 }
 
+void checkAroundBlocks(bool condition,int array[105][105],int value,int x,int y){
+	for(int dx=-1;dx<=1;dx++){
+		for(int dy=-1;dy<=1;dy++){
+			if(condition) array[x+dx][y+dy]=value; 
+			/*[x-1][y-1] [x-1][y] [x-1][y+1]
+			  [x][y-1]   [x][y]   [x][y+1]
+			  [x+1][y-1] [x+1][y] [x+1][y+1]*/
+		}
+	}
+}
+
 void generateMap(int rowf,int colf,int mine,int clickX,int clickY,int mineArea[105][105]){
-    srand(time(NULL));
-    while(mine){
-        int x=random(rowf); //generating random x coordinate
-        int y=random(colf); //generating random y coord
+    //srand(time(NULL));
+	random_device rd; //thanks to BlackHIG
+	mt19937 gen(rd());
+	while(mine){
+        uniform_int_distribution<> x(1, rowf); //generate x coordinate
+		uniform_int_distribution<> y(1, colf); //y coord
         if(x==clickX && y==clickY) continue; //skip if the mine position is the click position
         if(mineArea[x][y]==0) { //place mine if the block is empty
             mineArea[x][y]=9; //number 9 represents mine
@@ -64,11 +78,13 @@ void generateMap(int rowf,int colf,int mine,int clickX,int clickY,int mineArea[1
         for(int j=1;j<=colf;j++){
             int sum=0; //initialize the sum
             if(mineArea[i][j]!=9){ //if the block is not a mine
-                for(int dx=-1;dx<=1;dx++){
+                /*for(int dx=-1;dx<=1;dx++){
                     for(int dy=-1;dy<=1;dy++){
                         if(mineArea[i+dx][j+dy]==9) sum++; //check neighboring blocks for mine
                     }
-                }
+                }*/
+				int dx=0,dy=0;
+				checkAroundBlocks((mineArea[i+dx][j+dy]==9),mineArea[x+dx][y+dy]+1,0,rowf,colf);
                 mineArea[i][j]=sum; //update the block with the number of mines around it
             }
         }
@@ -86,6 +102,29 @@ void processAni(int row,int column){
 		for(int g=1;g<=(10-i);g++) cout<<' ';
 		cout<<"] "<<i*10<<"%"<<'\n';
 		Sleep(random(row*column*3)); //random interval
+	}
+}
+
+void coutArray(int array[105][105],int limitX,int limitY){
+	for(int i=1;i<=limitX;i++){
+		for(int j=1;j<=limitY;j++){
+			cout<<array[i][j]<<' '; //output
+		}cout<<endl;
+	}cout<<endl;
+}
+
+void coutSymbols(int array[105][105],int arrayStatus[105][105],int limitX,int limitY){
+	for(int i=1;i<=limitX;i++){
+		for(int j=1;j<=limitY;j++){ //statement of b[k][b]: =0 closed | =1 opened | =2 flagged
+			if(arrayStatus[i][j]==0){
+				cout<<"#"<<' '; //closed
+			}else if(arrayStatus[i][j]==1){
+				cout<<array[i][j]<<' '; //opened
+			}else if(arrayStatus[i][j]==2){
+				cout<<"P"<<' '; //flagged
+			}
+		}cout<<endl;
+		//judge the status of the grid (opened, closed, flagged) 
 	}
 }
 
@@ -108,6 +147,7 @@ int main(){
     }else if(sizeof(void*)==8) {
         cout<<"64-bit"<<endl;
     }
+    
 	srand(time(NULL)); //random seed
 	//system("color 1B");
 	//system("title MineSweeper");//set window title
@@ -130,27 +170,11 @@ int main(){
 	cout<<'\n';
 	while(true){
 		/*if(!firstClick){ //because the map generation is after first click
-			for(int i=1;i<=row;i++){
-				for(int j=1;j<=column;j++){
-					cout<<ui[i][j]<<' '; //output the numbers
-				}
-				cout<<endl;
-			}cout<<endl;
+			coutArray(ui,row,column);
 		}*/
 	//for debugging
-	
-		for(int i=1;i<=row;i++){
-			for(int j=1;j<=column;j++){ //statement of b[k][b]: =0 closed | =1 opened | =2 flagged
-				if(uiStatus[i][j]==0){
-					cout<<"#"<<' '; //closed
-				}else if(uiStatus[i][j]==1){
-					cout<<ui[i][j]<<' '; //opened
-				}else if(uiStatus[i][j]==2){
-					cout<<"P"<<' '; //flagged
-				}
-			}cout<<endl;
-			//judge the status of the grid (opened, closed, flagged) 
-		}
+
+		coutSymbols(ui,uiStatus,row,column);
 		cout<<"Lives:"<<lives<<' '<<"Mines:"<<mine_sum<<'\n';
 		char op; //input operator
 		cin>>op;
@@ -192,17 +216,8 @@ int main(){
 				firstClick=false;
 				//system("cls");
 				uiStatus[x][y]=1; //current block is opened
-				if(uiStatus[x][y]==1&&ui[x][y]==0){ //the current block was opened and blank
-					for(int dx=-1;dx<=1;dx++){
-						for(int dy=-1;dy<=1;dy++){
-							if(ui[x+dx][y+dy]==0 && uiStatus[x+dx][y+dy]!=2) uiStatus[x+dx][y+dy]=1; 
-							//around blocks will be auto opened
-							/*[x-1][y-1] [x-1][y] [x-1][y+1]
-							  [x][y-1]   [x][y]   [x][y+1]
-							  [x+1][y-1] [x+1][y] [x+1][y+1]*/
-						}
-					}
-				}
+				int dx=0,dy=0;
+				checkAroundBlocks((ui[x+dx][y+dy]==0 && uiStatus[x+dx][y+dy]!=2),uiStatus,0,x,y);
 				//determine if there are any blank squares around, and if there are, open them automatically
 			}
 		}
@@ -254,12 +269,7 @@ int main(){
 				cout<<"outputting..."<<'\n';
 				Sleep(1000);
 				//system("cls");
-				for(int i=1;i<=x;i++){
-					for(int j=1;j<=y;j++){
-						cout<<ui[i][j]<<' '; //output
-					}cout<<endl;
-				}cout<<endl;
-				
+				coutArray(ui,x,y);
 			}
 			Sleep(1500);
 			cout<<endl;
