@@ -11,7 +11,6 @@
 #include <cctype>
 #include <string>
 #include <random>
-#include <functional>
 //#include <unistd.h>
 
 #if _WIN32 || WIN32 //thanks to Hi-Kite
@@ -53,10 +52,6 @@ bool isNumber(string str){
         }
     }
     return true;
-}
-
-void checkAroundBlocks(bool condition,int array[105][105],int value,int x,int y){
-	
 }
 
 void generateMap(int rowf,int colf,int mine,int clickX,int clickY,int mineArea[105][105]){
@@ -159,13 +154,13 @@ int main(){
 			cout<<"failed to process data, please reset map size/health/mine_sum\n";
 			cin>>row>>column>>lives>>mine_sum;
 	}
-	print("generating map...");cout<<endl;
+	print("preloading map...");cout<<endl;
 	
 	cout<<'\n';
 	while(true){
-		if(!firstClick){ //because the map generation is after first click
+		/*if(!firstClick){ //because the map generation is after first click
 			coutArray(ui,row,column);
-		}
+		}*/
 	//for debugging
 
 		coutSymbols(ui,uiStatus,row,column);
