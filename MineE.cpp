@@ -11,6 +11,7 @@
 #include <cctype>
 #include <string>
 #include <random>
+#include <functional>
 //#include <unistd.h>
 
 #if _WIN32 || WIN32 //thanks to Hi-Kite
@@ -28,6 +29,12 @@ Operator description:
 4. a indicates Ai automatic demining, and the last two coordinates indicate Ai demining range
 */
 using namespace std;
+
+int ui[105][105]={0},uiStatus[105][105]={0}; 
+int lives,mine_sum;
+bool firstClick=true;
+int row,column; //map size
+int minesum_correct=0,minesum_user=0;
 
 void print(string s){ //100% created originally
 	//getline(cin,s);
@@ -49,14 +56,7 @@ bool isNumber(string str){
 }
 
 void checkAroundBlocks(bool condition,int array[105][105],int value,int x,int y){
-	for(int dx=-1;dx<=1;dx++){
-		for(int dy=-1;dy<=1;dy++){
-			if(condition) array[x+dx][y+dy]=value; 
-			/*[x-1][y-1] [x-1][y] [x-1][y+1]
-			  [x][y-1]   [x][y]   [x][y+1]
-			  [x+1][y-1] [x+1][y] [x+1][y+1]*/
-		}
-	}
+	
 }
 
 void generateMap(int rowf,int colf,int mine,int clickX,int clickY,int mineArea[105][105]){
@@ -64,8 +64,10 @@ void generateMap(int rowf,int colf,int mine,int clickX,int clickY,int mineArea[1
 	random_device rd; //thanks to BlackHIG
 	mt19937 gen(rd());
 	while(mine){
-        uniform_int_distribution<> x(1, rowf); //generate x coordinate
-		uniform_int_distribution<> y(1, colf); //y coord
+		uniform_int_distribution<> x1(1, rowf);
+		uniform_int_distribution<> y1(1, colf);
+        int x=x1(gen); //generate x coordinate
+		int y=y1(gen); //y coord
         if(x==clickX && y==clickY) continue; //skip if the mine position is the click position
         if(mineArea[x][y]==0) { //place mine if the block is empty
             mineArea[x][y]=9; //number 9 represents mine
@@ -78,14 +80,12 @@ void generateMap(int rowf,int colf,int mine,int clickX,int clickY,int mineArea[1
         for(int j=1;j<=colf;j++){
             int sum=0; //initialize the sum
             if(mineArea[i][j]!=9){ //if the block is not a mine
-                /*for(int dx=-1;dx<=1;dx++){
+                for(int dx=-1;dx<=1;dx++){
                     for(int dy=-1;dy<=1;dy++){
                         if(mineArea[i+dx][j+dy]==9) sum++; //check neighboring blocks for mine
                     }
-                }*/
-				int dx=0,dy=0;
-				checkAroundBlocks((mineArea[i+dx][j+dy]==9),mineArea[x+dx][y+dy]+1,0,rowf,colf);
-                mineArea[i][j]=sum; //update the block with the number of mines around it
+                }
+				mineArea[i][j]=sum; //update the block with the number of mines around it
             }
         }
     }cout<<"array\n";
@@ -128,12 +128,6 @@ void coutSymbols(int array[105][105],int arrayStatus[105][105],int limitX,int li
 	}
 }
 
-int ui[105][105]={0},uiStatus[105][105]={0}; 
-int lives,mine_sum;
-bool firstClick=true;
-int row,column; //map size
-int minesum_correct=0,minesum_user=0;
-
 int main(){
 	cout<<"Working on ";
 	if(platform=="w"){
@@ -169,9 +163,9 @@ int main(){
 	
 	cout<<'\n';
 	while(true){
-		/*if(!firstClick){ //because the map generation is after first click
+		if(!firstClick){ //because the map generation is after first click
 			coutArray(ui,row,column);
-		}*/
+		}
 	//for debugging
 
 		coutSymbols(ui,uiStatus,row,column);
@@ -216,8 +210,14 @@ int main(){
 				firstClick=false;
 				//system("cls");
 				uiStatus[x][y]=1; //current block is opened
-				int dx=0,dy=0;
-				checkAroundBlocks((ui[x+dx][y+dy]==0 && uiStatus[x+dx][y+dy]!=2),uiStatus,0,x,y);
+				for(int dx=-1;dx<=1;dx++){
+					for(int dy=-1;dy<=1;dy++){
+						if(ui[x+dx][y+dy]==0 && uiStatus[x+dx][y+dy]!=2) uiStatus[x+dx][y+dy]=1;
+						/*[x-1][y-1] [x-1][y] [x-1][y+1]
+						  [x][y-1]   [x][y]   [x][y+1]
+						  [x+1][y-1] [x+1][y] [x+1][y+1]*/
+					}
+				}
 				//determine if there are any blank squares around, and if there are, open them automatically
 			}
 		}
@@ -263,7 +263,7 @@ int main(){
 			}
 			cout<<new_mine<<" NEW mine(s) was(were) found\n";
 			cout<<"output array?(y/n)"<<' ';
-			string ans;
+			char ans;
 			cin>>ans;
 			if(ans=='y'){
 				cout<<"outputting..."<<'\n';
