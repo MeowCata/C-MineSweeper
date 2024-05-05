@@ -40,46 +40,60 @@ void print(string s){ //100% created originally
 
 bool isNumber(string str){
     for(char c:str) {
-        if(!isdigit(c)) {
+        if(!isdigit(c)) { //current symbol is not a number
             return false;
         }
     }
     return true;
 }
 
-void generateMap(int rowf,int colf,int mine,int mineArea[105][105]){
-	while(mine){
-		int x=random(rowf);//a+rand()%b = [a, a+b-1]
-		int y=random(colf);
-		if(!mineArea[x][y]){//if(mineArea[x][y]==0){
-			mineArea[x][y]=9;
-			mine--;
-		}
-	}
-	for(int i=1;i<=rowf;i++){
-		for(int j=1;j<=colf;j++){
-			int sum=0;//sum is the current block number
-			if(mineArea[i][j]!=9){
-				if(mineArea[i-1][j-1]==9) sum++;//generate number
-				if(mineArea[i-1][j]==9) sum++; 
-				if(mineArea[i-1][j+1]==9) sum++;
-				if(mineArea[i][j-1]==9) sum++;
-				if(mineArea[i][j+1]==9) sum++;
-				if(mineArea[i+1][j-1]==9) sum++;
-				if(mineArea[i+1][j]==9) sum++;
-				if(mineArea[i+1][j+1]==9) sum++;
-				//sum=!(mineArea[i-1][j-1]-9)+!(mineArea[i-1][j]-9)+!(mineArea[i-1][j+1]-9)+!(mineArea[i][j-1]-9)+!(mineArea[i][j+1]-9)+!(mineArea[i+1][j-1]-9)+!(mineArea[i+1][j]-9)+!(mineArea[i+1][j+1]-9);
-				mineArea[i][j]=sum;
-			}
-		}
+void generateMap(int rowf,int colf,int mine,int clickX,int clickY,int mineArea[105][105]){
+    srand(time(NULL));
+    while(mine){
+        int x=random(rowf); //generating random x coordinate
+        int y=random(colf); //generating random y coord
+        if(x==clickX && y==clickY) continue; //skip if the mine position is the click position
+        if(mineArea[x][y]==0) { //place mine if the block is empty
+            mineArea[x][y]=9; //number 9 represents mine
+            mine--;
+        }
+    }cout<<"mine|";
+
+    //calculate the number of mines around each block
+    for(int i=1;i<=rowf;i++){
+        for(int j=1;j<=colf;j++){
+            int sum=0; //initialize the sum
+            if(mineArea[i][j]!=9){ //if the block is not a mine
+                for(int dx=-1;dx<=1;dx++){
+                    for(int dy=-1;dy<=1;dy++){
+                        if(mineArea[i+dx][j+dy]==9) sum++; //check neighboring blocks for mine
+                    }
+                }
+                mineArea[i][j]=sum; //update the block with the number of mines around it
+            }
+        }
+    }cout<<"array\n";
+}
+
+void processAni(int row,int column){
+	/*for(int i=0;i<=100;i+=10){
+		cout<<i<<"%... ";
+		Sleep(random(row*col*7));
+	}*/
+	for(int i=1;i<=10;i++){
+		cout<<"[";
+		for(int j=1;j<=i;j++) cout<<"*";
+		for(int g=1;g<=(10-i);g++) cout<<' ';
+		cout<<"] "<<i*10<<"%"<<'\n';
+		Sleep(random(row*column*3)); //random interval
 	}
 }
 
-int ui[105][105]={0},b[105][105]={0}; 
+int ui[105][105]={0},uiStatus[105][105]={0}; 
 int lives,mine_sum;
 bool firstClick=true;
-int row,column;
-int k=0,k1=0;
+int row,column; //map size
+int minesum_correct=0,minesum_user=0;
 
 int main(){
 	cout<<"Working on ";
@@ -112,22 +126,10 @@ int main(){
 			cin>>row>>column>>lives>>mine_sum;
 	}
 	print("generating map...");cout<<endl;
-	/*for(int i=0;i<=100;i+=10){
-		cout<<i<<"%... ";
-		Sleep(random(row*col*7));
-	}*/
-	for(int i=1;i<=10;i++){
-		cout<<"[";
-		for(int j=1;j<=i;j++) cout<<"*";
-		for(int g=1;g<=(10-i);g++) cout<<' ';
-		cout<<"] "<<i*10<<"%"<<'\n';
-		Sleep(random(row*column*3));
-	}
-	cout<<'\n'<<'\n';
-	int tempCalc=mine_sum;
-	//generateMap(row,column,tempCalc,ui); //origin position
+	
+	cout<<'\n';
 	while(true){
-		/*if(!firstClick){
+		/*if(!firstClick){ //because the map generation is after first click
 			for(int i=1;i<=row;i++){
 				for(int j=1;j<=column;j++){
 					cout<<ui[i][j]<<' '; //output the numbers
@@ -139,93 +141,89 @@ int main(){
 	
 		for(int i=1;i<=row;i++){
 			for(int j=1;j<=column;j++){ //statement of b[k][b]: =0 closed | =1 opened | =2 flagged
-				if(b[i][j]==0){
-					cout<<"#"<<' ';
-				}else if(b[i][j]==1){
-					cout<<ui[i][j]<<' ';
-				}else if(b[i][j]==2){
-					cout<<"P"<<' ';
+				if(uiStatus[i][j]==0){
+					cout<<"#"<<' '; //closed
+				}else if(uiStatus[i][j]==1){
+					cout<<ui[i][j]<<' '; //opened
+				}else if(uiStatus[i][j]==2){
+					cout<<"P"<<' '; //flagged
 				}
 			}cout<<endl;
 			//judge the status of the grid (opened, closed, flagged) 
 		}
-		cout<<"Lives: "<<lives<<'\n';
-		char op; // input operator
+		cout<<"Lives:"<<lives<<' '<<"Mines:"<<mine_sum<<'\n';
+		char op; //input operator
 		cin>>op;
 		//cout<<"number input\n";
 		string x1,y1;
-		cin>>x1;cin>>y1;
+		cin>>x1>>y1;
 		int x,y;//input coord
 		while(!isNumber(x1) || !isNumber(y1) || 
 				(op!='a' && op!='q' && op!='h' && op!='c' && op!='p')||
-				stoi(x1)<=0||stoi(y1)<=0){ //data judgment
+				stoi(x1)<=0||stoi(y1)<=0||(firstClick&&op!='q')||
+				stoi(x1)>row||stoi(y1)>column){ //data judgment
 			print("invalid op/number input");cout<<'\n';
 			cin>>op>>x1>>y1; 
 		}
 		x=stoi(x1);y=stoi(y1); //stof -> float | stoi -> int
 
-		if(firstClick) generateMap(row,column,tempCalc,ui);
+		if(firstClick){ //map generation
+			generateMap(row,column,mine_sum,x,y,ui);
+			processAni(row,column); //play loading animation
+		}
 		if(op=='q'){
 			if(ui[x][y]==9){//losing
-				//system("cls");
-				if(firstClick){ 
-					//b[x][y]=2;k++;k1++;continue; /*origin solution when first clicked a mine*/
-					while(ui[x][y]!=9) generateMap(row,column,tempCalc,ui);
-					firstClick=false;
-				}else{
-					if(b[x][y]==2) continue;//anti-blood on a flag
-					lives--;
-					//system("color 47");
-					print("oops! you just clicked a mine");cout<<endl<<endl;
-					Sleep(200);
-					//system("color 07");
-					if(lives==0){
-						print("You Lose!");
-						string lose;cin>>lose;
-						break;
-					}
-					//auto-flag after one death
-					b[x][y]=2;
-					k++;k1++;
-				} /*<--connected with the else above*/
+				if(uiStatus[x][y]==2) continue;//anti-blood on a flag
+				lives--;
+				//system("color 47");
+				print("oops! you just clicked a mine");cout<<endl<<endl;
+				Sleep(200);
+				//system("color 07");
+				if(lives==0){
+					print("You Lose!");
+					string lose;cin>>lose;
+					break;
+				}
+				//auto-flag after one death
+				uiStatus[x][y]=2;
+				minesum_correct++;minesum_user++;
 			}
 			else{
 				firstClick=false;
 				//system("cls");
-				b[x][y]=1;
-				if(b[x][y]==1&&ui[x][y]==0){
-					if(ui[x-1][y-1]==0) b[x-1][y-1]=1;
-					if(ui[x-1][y]==0) b[x-1][y]=1;
-					if(ui[x-1][y+1]==0) b[x-1][y+1]=1;
-					if(ui[x][y-1]==0) b[x][y-1]=1;
-					if(ui[x][y]==0) b[x][y]=1;
-					if(ui[x][y+1]==0) b[x][y+1]=1;
-					if(ui[x+1][y-1]==0) b[x+1][y-1]=1;
-					if(ui[x+1][y]==0) b[x+1][y]=1;
-					if(ui[x+1][y+1]==0) b[x+1][y+1]=1;	
+				uiStatus[x][y]=1; //current block is opened
+				if(uiStatus[x][y]==1&&ui[x][y]==0){ //the current block was opened and blank
+					for(int dx=-1;dx<=1;dx++){
+						for(int dy=-1;dy<=1;dy++){
+							if(ui[x+dx][y+dy]==0 && uiStatus[x+dx][y+dy]!=2) uiStatus[x+dx][y+dy]=1; 
+							//around blocks will be auto opened
+							/*[x-1][y-1] [x-1][y] [x-1][y+1]
+							  [x][y-1]   [x][y]   [x][y+1]
+							  [x+1][y-1] [x+1][y] [x+1][y+1]*/
+						}
+					}
 				}
-				//Determine if there are any blank squares around, and if there are, open them automatically
+				//determine if there are any blank squares around, and if there are, open them automatically
 			}
 		}
 		else if(op=='p'){//flagging
-			firstClick=false; //k stores the correct location of the mine (objective),
-			  			      //k1 is the user's marking location (subjective); Function: Store the total number of mines
+			firstClick=false; 
 			//system("cls"); 
-			k1++;
+			minesum_user++; //user thinks this block is mine
 		 	if(ui[x][y]==9){
-				k++;
+				minesum_correct++; //current block is mine
 			}	
-			b[x][y]=2;
+			uiStatus[x][y]=2; //flagged
 		}
 		else if(op=='c'){//unflagging 
 			//system("cls");
-			if(b[x][y]==2){
-				k1--;
+			if(uiStatus[x][y]==2){ //current block is flagged
+				minesum_user--; //same as the content above
 				if(ui[x][y]==9){
-					k--;
+					minesum_correct--;
 				}
-			b[x][y]=0;
-			}else{
+			uiStatus[x][y]=0;//unflagged
+			}else{ //current block is not flagged
 				//system("cls");
 				continue;
 			}
@@ -237,20 +235,20 @@ int main(){
 			int new_mine=0;
 			for(int i=1;i<=x;i++){
 				for(int j=1;j<=y;j++){
-					if(ui[i][j]==9){
-						if(b[i][j]!=2){
-							k++;k1++;
-							b[i][j]=2;
-							new_mine++;
+					if(ui[i][j]==9){ //current block is mine
+						if(uiStatus[i][j]!=2){ //current block is not flagged
+							minesum_correct++;minesum_user++;
+							uiStatus[i][j]=2; //auto flag
+							new_mine++; //sum the number of new mines
 						}
-						cout<<"mine position: "<<i<<' '<<j<<endl;
+						cout<<"mine position: "<<i<<' '<<j<<endl; //output mine position
 						Sleep(200);
 					}
 				}
 			}
 			cout<<new_mine<<" NEW mine(s) was(were) found\n";
 			cout<<"output array?(y/n)"<<' ';
-			char ans;
+			string ans;
 			cin>>ans;
 			if(ans=='y'){
 				cout<<"outputting..."<<'\n';
@@ -258,7 +256,7 @@ int main(){
 				//system("cls");
 				for(int i=1;i<=x;i++){
 					for(int j=1;j<=y;j++){
-						cout<<ui[i][j]<<' ';
+						cout<<ui[i][j]<<' '; //output
 					}cout<<endl;
 				}cout<<endl;
 				
@@ -268,7 +266,8 @@ int main(){
 		}else{
 			print("invalid operator");cout<<'\n';continue;
 		}
-		if(k==tempCalc && k==k1){//winning
+
+		if(minesum_correct==mine_sum && minesum_correct==minesum_user){ //winning condition
 			print("You Win!");
 			/*for(int i=1;i<=2;i++){
 				system("color 1a");
