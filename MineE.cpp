@@ -34,6 +34,7 @@ int lives, mine_sum;
 bool firstClick = true;
 int row, column; //map size
 int minesum_correct = 0, minesum_user = 0;
+int flag_sum;
 
 void print(string s){ //100% created originally
     //getline(cin,s);
@@ -161,6 +162,7 @@ int main(){
         cout << "failed to process data, please reset map size/health/mine_sum\n";
         cin >> row >> column >> lives >> mine_sum;
     }
+    flag_sum=mine_sum;
     print("preloading map..."); cout << endl;
 
     cout << '\n';
@@ -171,7 +173,7 @@ int main(){
         //for debugging
 
         coutSymbols(ui, uiStatus, row, column);
-        cout << "Lives:" << lives << ' ' << "Mines:" << mine_sum << '\n';
+        cout << "HP: " << lives << ' ' << "Mines: " << mine_sum << '\n' << "Flags-Remaining: " << flag_sum << '\n';
         string ops; //input operator
         cin >> ops;
         char op = ops[0];
@@ -228,11 +230,15 @@ int main(){
         else if (op == 'p') {//flagging
             firstClick = false;
             //system("cls"); 
-            minesum_user++; //user thinks this block is mine
-            if (ui[x][y] == 9) {
-                minesum_correct++; //current block is mine
-            }
-            uiStatus[x][y] = 2; //flagged
+            flag_sum--;
+            if (flag_sum >= 0) {
+				minesum_user++; //user thinks this block is mine
+				    if (ui[x][y] == 9) {
+				        minesum_correct++; //current block is mine
+				    }
+				uiStatus[x][y] = 2; //flagged
+			}
+			if (flag_sum < 0) flag_sum = 0;
         }
         else if (op == 'c') {//unflagging 
             //system("cls");
@@ -242,6 +248,7 @@ int main(){
                     minesum_correct--;
                 }
                 uiStatus[x][y] = 0;//unflagged
+                flag_sum++;
             } else { //current block is not flagged
                 //system("cls");
                 continue;
