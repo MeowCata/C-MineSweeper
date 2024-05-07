@@ -36,23 +36,57 @@ int row, column; //map size
 int minesum_correct = 0, minesum_user = 0;
 int flag_sum;
 
-void print(string s){ //100% created originally
+void print(string s, bool coutENDL){ //100% created originally
     //getline(cin,s);
     char ch[s.size()];
     for (int i = 0; i < s.size(); i++) ch[i] = s[i];
     for (int i = 0; i < s.size(); i++) {
         cout << ch[i];
         Sleep(70);
-    }
+    }if (coutENDL) cout<<endl;
 }
 
 bool isNumber(string str){
-    for (char c: str) {
+    for (auto c: str) {
         if (!isdigit(c)) { //current symbol is not a number
             return false;
         }
     }
     return true;
+}
+
+bool checkOutOfBorders(int checkX, int checkY) {
+	if (checkX <= 0 || checkX > row) {
+		return true;
+	}
+	if (checkY <= 0 || checkY > column) {
+		return true;
+	}
+	return false;
+}
+const int facingsX[9] = {-1, -1, -1, 0, 0, 1, 1, 1}; //thanks to BlackHIG's logic
+const int facingsY[9] = {-1, 0, 1, -1, 1, -1, 0, 1};
+/*[x-1][y-1] [x-1][y] [x-1][y+1]
+  [x][y-1]   [x][y]   [x][y+1]
+  [x+1][y-1] [x+1][y] [x+1][y+1]*/
+
+int calcNearbyMines(int checkX, int checkY, int array[105][105], int mineValue) {
+	int sum = 0;
+
+	for (int i = 0; i < 8; i++) {
+		int targetX = checkX + facingsX[i];
+		int targetY = checkY + facingsY[i];
+
+		if (checkOutOfBorders(targetX, targetY)) {
+			continue;
+		}
+
+		if (array[targetX][targetY] == mineValue) {
+			sum ++;
+		}
+	}
+
+	return sum;
 }
 
 void generateMap(int rowf, int colf, int mine, int clickX, int clickY, int mineArea[105][105]){
@@ -74,14 +108,8 @@ void generateMap(int rowf, int colf, int mine, int clickX, int clickY, int mineA
     //calculate the number of mines around each block
     for (int i = 1; i <= rowf; i++) {
         for (int j = 1; j <= colf; j++) {
-            int sum = 0; //initialize the sum
             if (mineArea[i][j] != 9) { //if the block is not a mine
-                for (int dx = -1; dx <= 1; dx++) {
-                    for (int dy = -1; dy <= 1; dy++) {
-                        if (mineArea[i + dx][j + dy] == 9) sum++; //check neighboring blocks for mine
-                    }
-                }
-                mineArea[i][j] = sum; //update the block with the number of mines around it
+                mineArea[i][j] = calcNearbyMines(i, j, mineArea, 9); //update the block with the number of mines around it
             }
         }
     } cout << "array\n";
@@ -114,6 +142,7 @@ void coutSymbols(int array[105][105], int arrayStatus[105][105], int limitX, int
     for (int k = 1; k <= limitY; k++) cout << k << ' ';
     cout << " " << "y";
     cout << endl << endl;
+    
     for (int i = 1; i <= limitX; i++) {
         for (int j = 1; j <= limitY; j++) { //statement of b[k][b]: =0 closed | =1 opened | =2 flagged
             if (arrayStatus[i][j] == 0) {
@@ -126,7 +155,8 @@ void coutSymbols(int array[105][105], int arrayStatus[105][105], int limitX, int
             }
         } cout << ' ' << i << endl;
         //judge the status of the grid (opened, closed, flagged) 
-    } cout << endl;
+    } //cout << endl;
+    
     for (int k = 1; k <= limitY * 2 + 1; k++) cout << ' ';
     cout << "x" << endl;
 }
@@ -153,7 +183,7 @@ int main(){
     cout << '\n';
     Sleep(200);
     cout << "inputting|format:<HEIGHT> <WIDTH> <HEALTH> <MINE_SUM>\n";//col width row height
-    print("example: 9 9 2 10"); cout << "\n";
+    print("example: 9 9 2 10", true);
     cin >> row >> column >> lives >> mine_sum;
 
     while (row >= 30 || row <= 0 || column >= 30 || column <= 0 ||
@@ -162,16 +192,15 @@ int main(){
         cout << "failed to process data, please reset map size/health/mine_sum\n";
         cin >> row >> column >> lives >> mine_sum;
     }
-    flag_sum=mine_sum;
-    print("preloading map..."); cout << endl;
+    flag_sum = mine_sum;
+    print("preloading map...", true);
 
     cout << '\n';
     while (true) {
-        /*if(!firstClick){ //because the map generation is after first click
+        if(!firstClick){ //because the map generation is after first click
             coutArray(ui,row,column);
-        }*/
+        }
         //for debugging
-
         coutSymbols(ui, uiStatus, row, column);
         cout << "HP: " << lives << ' ' << "Mines: " << mine_sum << '\n' << "Flags-Remaining: " << flag_sum << '\n';
         string ops; //input operator
@@ -182,10 +211,10 @@ int main(){
         cin >> x1 >> y1;
         int x, y;//input coord
         while (!isNumber(x1) || !isNumber(y1) ||
-            (op != 'a' && op != 'q' && op != 'c' && op != 'p') ||
+            (op != 'a' && op != 'q' && op != 'c' && op != 'p' && op != 't') ||
             stoi(x1) <= 0 || stoi(y1) <= 0 || (firstClick && op != 'q') ||
             stoi(x1) > row || stoi(y1) > column) { //data judgment
-            print("invalid op/number input"); cout << '\n';
+            print("invalid op/number input", true);
             cin >> op;
             cin >> x1 >> y1;
         }
@@ -201,11 +230,11 @@ int main(){
                 if (uiStatus[x][y] == 2) continue;//anti-blood on a flag
                 lives--;
                 //system("color 47");
-                print("oops! you just clicked a mine"); cout << endl << endl;
+                print("oops! you just clicked a mine", true); cout << endl;
                 Sleep(200);
                 //system("color 07");
                 if (lives == 0) {
-                    print("You Lose!");
+                    print("You Lose!", false);
                     string lose; cin >> lose;
                     break;
                 }
@@ -219,9 +248,7 @@ int main(){
                 for (int dx = -1; dx <= 1; dx++) {
                     for (int dy = -1; dy <= 1; dy++) {
                         if (ui[x + dx][y + dy] == 0 && uiStatus[x + dx][y + dy] != 2) uiStatus[x + dx][y + dy] = 1;
-                        /*[x-1][y-1] [x-1][y] [x-1][y+1]
-                          [x][y-1]   [x][y]   [x][y+1]
-                          [x+1][y-1] [x+1][y] [x+1][y+1]*/
+                        //current block is blank and not flagged
                     }
                 }
                 //determine if there are any blank squares around, and if there are, open them automatically
@@ -256,7 +283,7 @@ int main(){
         }
         else if (op == 'a') {
             firstClick = false;
-            print("ai-mode enabled"); cout << '\n';
+            print("ai-mode enabled", true);
             cout << "looking for mines in: " << '(' << x << ',' << y << ')' << endl;
             int new_mine = 0;
             for (int i = 1; i <= x; i++) {
@@ -284,12 +311,25 @@ int main(){
             }
             Sleep(1500);
             cout << endl;
-        } else {
-            print("invalid operator"); cout << '\n'; continue;
+        } else if (op == 't') {
+			print("tip-mode enabled", true);
+			int tempcnt = 0, flagcnt = 0;
+			for (int i = 1; i <= x; i++) {
+				for (int j = 1; j <= y; j++) {
+					if (ui[i][j] == 9) {
+						tempcnt++; //mine
+						if (uiStatus[i][j] == 2) flagcnt++; //mine&flagged
+					}
+				}
+			}
+			cout<<tempcnt<<" mine(s) are in the area you just input,and "<<flagcnt<<" of them is/are flagged\n";
+			Sleep(1200);
+		} else {
+            print("invalid operator", true); continue;
         }
 
         if (minesum_correct == mine_sum && minesum_correct == minesum_user) { //winning condition
-            print("You Win!");
+            print("You Win!", false);
             /*for(int i=1;i<=2;i++){
                 system("color 1a");
                 Sleep(200);
