@@ -200,9 +200,9 @@ int main() {
 
 	cout << '\n';
 	while (true) {
-		if(!firstClick) { //because the map generation is after first click
+		/*if(!firstClick) { //because the map generation is after first click
 			coutArray(ui,row,column);
-		}
+		}*/
 		//for debugging
 		coutSymbols(ui, uiStatus, row, column);
 		cout << "HP: " << lives << ' ' << "Mines: " << mine_sum << '\n' << "Flags-Remaining: " << flag_sum << '\n';
