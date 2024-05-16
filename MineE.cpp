@@ -246,9 +246,12 @@ int main() {
 				}
 				//auto-flag after one death
 				uiStatus[x][y] = 2;
+                flag_sum--;
 				minesum_correct++;
 				minesum_user++;
-			} else {
+			} else if (uiStatus[x][y] == 2) {
+            	continue;
+            } else {
 				//system("cls");
 				uiStatus[x][y] = 1; //current block is opened
 				for (int dx = -1; dx <= 1; dx++) {
@@ -262,6 +265,7 @@ int main() {
 		} else if (op == 'p') { //flagging
 			firstClick = false;
 			//system("cls");
+            if (uiStatus[x][y] == 2) continue;
 			flag_sum--;
 			if (flag_sum >= 0) {
 				minesum_user++; //user thinks this block is mine
