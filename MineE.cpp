@@ -33,7 +33,7 @@ int lives, mine_sum;
 bool firstClick = true;
 int row, column; //map size
 int minesum_correct = 0, minesum_user = 0;
-int flag_sum;
+int flag_sum, score = 0;
 
 void print(string s, bool coutENDL) { //100% created originally
 	//getline(cin,s);
@@ -174,11 +174,19 @@ void openEmptyAround(int x, int y) {
 		for (int i = 0; i < 8; i++) {
 			int newX = x + facingsX[i];
 			int newY = y + facingsY[i];
-			if (!checkOutOfBorders(newX, newY) && uiStatus[newX][newY] == 0) {
-				openEmptyAround(newX, newY);
-			}
+			if (!checkOutOfBorders(newX, newY) && uiStatus[newX][newY] == 0) openEmptyAround(newX, newY);
 		}
 	}
+}
+
+bool msWin() {
+	int cnt = 0;
+	for (int i=1; i <= row; i++) {
+		for (int j=1; j <= column; j++) {
+			if (uiStatus[i][j] == 0) cnt++;
+		}
+	}
+	return flag_sum == cnt;
 }
 
 int main() {
@@ -221,6 +229,7 @@ int main() {
 		}*/
 		//for debugging
 		coutSymbols(ui, uiStatus, row, column);
+		
 		cout << "HP: " << lives << ' ' << "Mines: " << mine_sum << '\n' << "Flags-Remaining: " << flag_sum << '\n';
 		string ops; //input operator
 		cin >> ops;
@@ -229,6 +238,7 @@ int main() {
 		string x1, y1;
 		cin >> x1 >> y1;
 		int x, y;//input coord
+		
 		while (!isNumber(x1) || !isNumber(y1) ||
 		        (op != 'a' && op != 'q' && op != 'c' && op != 'p' && op != 't' && op != 'f') ||
 		        stoi(x1) <= 0 || stoi(y1) <= 0 || (firstClick && op != 'q') ||
@@ -244,6 +254,7 @@ int main() {
 			generateMap(row, column, mine_sum, x, y, ui);
 			processAni(row, column); //play loading animation
 		}
+		
 		if (op == 'q') {
 			firstClick = false;
 			if (ui[x][y] == 9) {//losing
@@ -366,7 +377,7 @@ int main() {
 			continue;
 		}
 
-		if (minesum_correct == mine_sum && minesum_correct == minesum_user) { //winning condition
+		if ((minesum_correct == mine_sum && minesum_correct == minesum_user) || msWin()) { //winning condition
 			print("You Win!", false);
 			/*for(int i=1;i<=2;i++){
 			    system("color 1a");
