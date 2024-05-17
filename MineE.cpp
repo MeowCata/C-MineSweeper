@@ -28,7 +28,7 @@ Operator description:
 */
 using namespace std;
 
-int ui[105][105] = { 0}, uiStatus[105][105] = { 0};
+int ui[105][105] = {0}, uiStatus[105][105] = {0};
 int lives, mine_sum;
 bool firstClick = true;
 int row, column; //map size
@@ -165,6 +165,22 @@ void coutSymbols(int array[105][105], int arrayStatus[105][105], int limitX, int
 	cout << "x" << endl;
 }
 
+void openEmptyAround(int x, int y) {
+	if (checkOutOfBorders(x, y)) return;
+
+	uiStatus[x][y] = 1;
+
+	if (ui[x][y] == 0) {
+		for (int i = 0; i < 8; i++) {
+			int newX = x + facingsX[i];
+			int newY = y + facingsY[i];
+			if (!checkOutOfBorders(newX, newY) && uiStatus[newX][newY] == 0) {
+				openEmptyAround(newX, newY);
+			}
+		}
+	}
+}
+
 int main() {
 	cout << "Working on ";
 	if (platform == "w") {
@@ -246,26 +262,21 @@ int main() {
 				}
 				//auto-flag after one death
 				uiStatus[x][y] = 2;
-                flag_sum--;
+				flag_sum--;
 				minesum_correct++;
 				minesum_user++;
 			} else if (uiStatus[x][y] == 2) {
-            	continue;
-            } else {
+				continue;
+			} else {
 				//system("cls");
 				uiStatus[x][y] = 1; //current block is opened
-				for (int dx = -1; dx <= 1; dx++) {
-					for (int dy = -1; dy <= 1; dy++) {
-						if (ui[x + dx][y + dy] == 0 && uiStatus[x + dx][y + dy] != 2) uiStatus[x + dx][y + dy] = 1;
-						//current block is blank and not flagged
-					}
-				}
+				if (ui[x][y] == 0) openEmptyAround(x, y);
 				//determine if there are any blank squares around, and if there are, open them automatically
 			}
 		} else if (op == 'p') { //flagging
 			firstClick = false;
 			//system("cls");
-            if (uiStatus[x][y] == 2) continue;
+			if (uiStatus[x][y] == 2) continue;
 			flag_sum--;
 			if (flag_sum >= 0) {
 				minesum_user++; //user thinks this block is mine
@@ -315,7 +326,7 @@ int main() {
 			char ans;
 			cin >> ans;
 			if (ans == 'y') {
-				cout << "outputting..." << '\n';
+				cout << "outputting...\n";
 				//cout<<minesum_correct<<' '<<minesum_user<<'\n';
 				Sleep(1000);
 				//system("cls");
