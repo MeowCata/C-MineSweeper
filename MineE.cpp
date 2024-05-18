@@ -33,7 +33,7 @@ int lives, mine_sum;
 bool firstClick = true;
 int row, column; //map size
 int minesum_correct = 0, minesum_user = 0;
-int flag_sum, score = 0;
+int flag_sum;
 
 void print(string s, bool coutENDL) { //100% created originally
 	//getline(cin,s);
@@ -126,28 +126,28 @@ void processAni(int row, int column) {
 }
 
 void coutArray(int array[105][105], int limitX, int limitY) {
-	cout<<endl;
+	cout << endl << "   ";
 	for (int k = 1; k <= limitY; k++) cout << k << ' ';
-	cout << " " << "y";
-	cout << endl << endl;
+	cout << "y";
+	cout << endl;
 	for (int i = 1; i <= limitX; i++) {
+		cout << endl << i << "  ";
 		for (int j = 1; j <= limitY; j++) {
 			cout << array[i][j] << ' '; //output
 		}
-		cout << ' ' << i << endl;
 	} //cout << endl;
-	for (int k = 1; k <= limitY * 2 + 1; k++) cout << ' ';
-	cout << "x" << endl;
+	cout << endl << "x\n";
 }
 
 void coutSymbols(int array[105][105], int arrayStatus[105][105], int limitX, int limitY) {
-	cout << endl;
+	cout << endl << "   ";
 	for (int k = 1; k <= limitY; k++) cout << k << ' ';
-	cout << " " << "y";
-	cout << endl << endl;
+	cout << "y";
+	cout << endl;
 
 	for (int i = 1; i <= limitX; i++) {
-		for (int j = 1; j <= limitY; j++) { //statement of b[k][b]: =0 closed | =1 opened | =2 flagged
+		cout << endl << i << "  ";
+		for (int j = 1; j <= limitY; j++) { //statement of b[k][b]: =0 closed | =1 opened | =2 flagged	
 			if (arrayStatus[i][j] == 0) {
 				cout << "#" << ' '; //closed
 			} else if (arrayStatus[i][j] == 1) {
@@ -157,12 +157,8 @@ void coutSymbols(int array[105][105], int arrayStatus[105][105], int limitX, int
 				cout << "P" << ' '; //flagged
 			}
 		}
-		cout << ' ' << i << endl;
 		//judge the status of the grid (opened, closed, flagged)
-	} //cout << endl;
-
-	for (int k = 1; k <= limitY * 2 + 1; k++) cout << ' ';
-	cout << "x" << endl;
+	} cout << endl << "x\n";
 }
 
 void openEmptyAround(int x, int y) {
