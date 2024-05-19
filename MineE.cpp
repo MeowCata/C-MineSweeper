@@ -30,10 +30,12 @@ using namespace std;
 
 int ui[105][105] = {0}, uiStatus[105][105] = {0};
 int lives, mine_sum;
-bool firstClick = true;
+bool firstClick = true, wrAnalyze = false;
 int row, column; //map size
 int minesum_correct = 0, minesum_user = 0;
 int flag_sum;
+float blankCnt = 0.0, currentUiNum = 0.0, pm = 0.0;
+int wrX[105] = {0}, wrY[105] = {0};
 
 void print(string s, bool coutENDL) { //100% created originally
 	//getline(cin,s);
@@ -147,7 +149,7 @@ void coutSymbols(int array[105][105], int arrayStatus[105][105], int limitX, int
 
 	for (int i = 1; i <= limitX; i++) {
 		cout << endl << i << "  ";
-		for (int j = 1; j <= limitY; j++) { //statement of b[k][b]: =0 closed | =1 opened | =2 flagged	
+		for (int j = 1; j <= limitY; j++) { //statement of b[k][b]: =0 closed | =1 opened | =2 flagged
 			if (arrayStatus[i][j] == 0) {
 				cout << "#" << ' '; //closed
 			} else if (arrayStatus[i][j] == 1) {
@@ -158,7 +160,8 @@ void coutSymbols(int array[105][105], int arrayStatus[105][105], int limitX, int
 			}
 		}
 		//judge the status of the grid (opened, closed, flagged)
-	} cout << endl << "x\n";
+	}
+	cout << endl << "x\n";
 }
 
 void openEmptyAround(int x, int y) {
@@ -186,6 +189,7 @@ bool msWin() {
 }
 
 int main() {
+	int x = 0, y = 0;
 	cout << "Working on ";
 	if (platform == "w") {
 		cout << "Windows ";
@@ -211,11 +215,17 @@ int main() {
 
 	while (row >= 30 || row <= 0 || column >= 30 || column <= 0 ||
 	        lives >= (row * column) || lives == 0 ||
-	        mine_sum >= (row * column) || mine_sum <= 0 || mine_sum == 1) { //judge input data
+	        mine_sum >= (row * column) || mine_sum <= 0 || mine_sum == 1 ||
+	        row * column - 1 == mine_sum) { //judge input data
 		cout << "failed to process data, please reset map size/health/mine_sum\n";
 		cin >> row >> column >> lives >> mine_sum;
 	}
 	flag_sum = mine_sum;
+	
+	cout<<"<NEW>enable LoseRate Analyzing?(y/n)";
+	char ans;
+	cin>>ans;
+	if (ans == 'y') wrAnalyze = true;
 	print("preloading map...", true);
 
 	cout << '\n';
@@ -227,14 +237,27 @@ int main() {
 		coutSymbols(ui, uiStatus, row, column);
 		
 		cout << "HP: " << lives << ' ' << "Mines: " << mine_sum << '\n' << "Flags-Remaining: " << flag_sum << '\n';
+		if (wrAnalyze) {
+			cout << "PM: " << fixed << setprecision(1) << pm << '%' << '(' << x << ',' << y << ") ";
+			if (uiStatus[x][y] == 2) cout<<"(flag-detection)\n";
+			if (pm == 100) {
+				for (int i = 0; i < 105; i++) {
+					if (wrX[i] != 0 && wrY[i] != 0) {
+						cout << "->(" << wrX[i] << ',' << wrY[i] << ')' << ' ';
+						wrX[i] = 0; wrY[i] = 0;
+					}
+				}
+			}
+		}
+		cout<<endl;
 		string ops; //input operator
 		cin >> ops;
 		char op = ops[0];
 		//cout<<"number input\n";
 		string x1, y1;
 		cin >> x1 >> y1;
-		int x, y;//input coord
-		
+		//int x, y;//input coord
+
 		while (!isNumber(x1) || !isNumber(y1) ||
 		        (op != 'a' && op != 'q' && op != 'c' && op != 'p' && op != 't' && op != 'f') ||
 		        stoi(x1) <= 0 || stoi(y1) <= 0 || (firstClick && op != 'q') ||
@@ -250,7 +273,7 @@ int main() {
 			generateMap(row, column, mine_sum, x, y, ui);
 			processAni(row, column); //play loading animation
 		}
-		
+
 		if (op == 'q') {
 			firstClick = false;
 			if (ui[x][y] == 9) {//losing
@@ -390,6 +413,36 @@ int main() {
 			string end;
 			cin >> end;
 			break;
+		}
+		if (wrAnalyze) {
+			if (ui[x][y] != 9 && uiStatus[x][y] != 2) {
+				currentUiNum = ui[x][y];
+				blankCnt = 0;
+				for (int i = 0; i < 8; i++) {
+					int targetX = x + facingsX[i];
+					int targetY = y + facingsY[i];
+					if (checkOutOfBorders(targetX,targetY)) continue;
+					if (uiStatus[targetX][targetY] == 0) blankCnt++;
+					if (uiStatus[targetX][targetY] == 2) currentUiNum--;
+				}
+				pm = currentUiNum / blankCnt;
+				pm *= 100;
+				if (pm == 100) {
+					for (int i = 0; i < 8; i++) {
+						int targetX = x + facingsX[i];
+						int targetY = y + facingsY[i];
+						if (checkOutOfBorders(targetX,targetY)) continue;
+						if (uiStatus[targetX][targetY] == 0) {
+							wrX[i] = targetX;
+							wrY[i] = targetY;
+						}
+					}
+				}
+			} else {
+				currentUiNum = 0;
+				blankCnt = 0;
+				pm = 0;
+			}
 		}
 	}
 	return 0;
