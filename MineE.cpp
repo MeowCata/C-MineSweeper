@@ -30,12 +30,10 @@ using namespace std;
 
 int ui[105][105] = {0}, uiStatus[105][105] = {0};
 int lives, mine_sum;
-bool firstClick = true, wrAnalyze = false;
+bool firstClick = true;
 int row, column; //map size
 int minesum_correct = 0, minesum_user = 0;
 int flag_sum;
-float blankCnt = 0.0, currentUiNum = 0.0, pm = 0.0;
-int wrX[105] = {0}, wrY[105] = {0};
 
 void print(string s, bool coutENDL) { //100% created originally
 	//getline(cin,s);
@@ -149,7 +147,7 @@ void coutSymbols(int array[105][105], int arrayStatus[105][105], int limitX, int
 
 	for (int i = 1; i <= limitX; i++) {
 		cout << endl << i << "  ";
-		for (int j = 1; j <= limitY; j++) { //statement of b[k][b]: =0 closed | =1 opened | =2 flagged
+		for (int j = 1; j <= limitY; j++) { //statement of b[k][b]: =0 closed | =1 opened | =2 flagged	
 			if (arrayStatus[i][j] == 0) {
 				cout << "#" << ' '; //closed
 			} else if (arrayStatus[i][j] == 1) {
@@ -160,8 +158,7 @@ void coutSymbols(int array[105][105], int arrayStatus[105][105], int limitX, int
 			}
 		}
 		//judge the status of the grid (opened, closed, flagged)
-	}
-	cout << endl << "x\n";
+	} cout << endl << "x\n";
 }
 
 void openEmptyAround(int x, int y) {
@@ -180,16 +177,42 @@ void openEmptyAround(int x, int y) {
 
 bool msWin() {
 	int cnt = 0;
-	for (int i=1; i <= row; i++) {
-		for (int j=1; j <= column; j++) {
+	for (int i = 1; i <= row; i++) {
+		for (int j = 1; j <= column; j++) {
 			if (uiStatus[i][j] == 0) cnt++;
 		}
 	}
 	return flag_sum == cnt;
 }
 
+void autoFlag(int ui[105][105], int uiStatus[105][105]) {
+	for (int i = 1; i <= row; i++) {
+		for (int j = 1; j <= column; j++) { //traverse every block
+			int currentNum = ui[i][j], tempNum = 0;
+			int flagTX[10] = {-1}, flagTY[10] = {-1};
+			for (int k = 0; k < 8; k++) { 
+				int targetX = i + facingsX[k];
+				int targetY = j + facingsY[k];
+				if (checkOutOfBorders(targetX, targetY)) continue;
+				if (ui[targetX][targetY] == 0) continue;
+				if (uiStatus[targetX][targetY] == 0) {
+					tempNum++;
+					flagTX[k] = targetX;
+					flagTY[k] = targetY;
+				}
+			}
+			if (currentNum == tempNum) {
+				for (int i = 0; i < 10; i++) {
+					if (flagTX[i] != -1 && flagTY[i] != -1) {
+						uiStatus[flagTX[i]][flagTY[i]] = 2;
+					}
+				}
+			}
+		}
+	}
+}
+
 int main() {
-	int x = 0, y = 0;
 	cout << "Working on ";
 	if (platform == "w") {
 		cout << "Windows ";
@@ -215,17 +238,12 @@ int main() {
 
 	while (row >= 30 || row <= 0 || column >= 30 || column <= 0 ||
 	        lives >= (row * column) || lives == 0 ||
-	        mine_sum >= (row * column) || mine_sum <= 0 || mine_sum == 1 ||
-	        row * column - 1 == mine_sum) { //judge input data
+	        mine_sum >= (row * column) || mine_sum <= 0 || mine_sum == 1 || 
+			row * column - 1 == mine_sum) { //judge input data
 		cout << "failed to process data, please reset map size/health/mine_sum\n";
 		cin >> row >> column >> lives >> mine_sum;
 	}
 	flag_sum = mine_sum;
-	
-	cout<<"<NEW>enable LoseRate Analyzing?(y/n)";
-	char ans;
-	cin>>ans;
-	if (ans == 'y') wrAnalyze = true;
 	print("preloading map...", true);
 
 	cout << '\n';
@@ -237,29 +255,16 @@ int main() {
 		coutSymbols(ui, uiStatus, row, column);
 		
 		cout << "HP: " << lives << ' ' << "Mines: " << mine_sum << '\n' << "Flags-Remaining: " << flag_sum << '\n';
-		if (wrAnalyze) {
-			cout << "PM: " << fixed << setprecision(1) << pm << '%' << '(' << x << ',' << y << ") ";
-			if (uiStatus[x][y] == 2) cout<<"(flag-detection)\n";
-			if (pm == 100) {
-				for (int i = 0; i < 105; i++) {
-					if (wrX[i] != 0 && wrY[i] != 0) {
-						cout << "->(" << wrX[i] << ',' << wrY[i] << ')' << ' ';
-						wrX[i] = 0; wrY[i] = 0;
-					}
-				}
-			}
-		}
-		cout<<endl;
 		string ops; //input operator
 		cin >> ops;
 		char op = ops[0];
 		//cout<<"number input\n";
 		string x1, y1;
 		cin >> x1 >> y1;
-		//int x, y;//input coord
-
+		int x, y;//input coord
+		
 		while (!isNumber(x1) || !isNumber(y1) ||
-		        (op != 'a' && op != 'q' && op != 'c' && op != 'p' && op != 't' && op != 'f') ||
+		        (op != 'q' && op != 'c' && op != 'p') ||
 		        stoi(x1) <= 0 || stoi(y1) <= 0 || (firstClick && op != 'q') ||
 		        stoi(x1) > row || stoi(y1) > column) { //data judgment
 			print("invalid op/number input", true);
@@ -273,7 +278,7 @@ int main() {
 			generateMap(row, column, mine_sum, x, y, ui);
 			processAni(row, column); //play loading animation
 		}
-
+		
 		if (op == 'q') {
 			firstClick = false;
 			if (ui[x][y] == 9) {//losing
@@ -302,6 +307,7 @@ int main() {
 				uiStatus[x][y] = 1; //current block is opened
 				if (ui[x][y] == 0) openEmptyAround(x, y);
 				//determine if there are any blank squares around, and if there are, open them automatically
+				autoFlag(ui, uiStatus);
 			}
 		} else if (op == 'p') { //flagging
 			firstClick = false;
@@ -329,68 +335,6 @@ int main() {
 				//system("cls");
 				continue;
 			}
-		} else if (op == 'a') {
-			firstClick = false;
-			print("ai-mode enabled", true);
-			cout << "looking for mines in: " << '(' << x << ',' << y << ')' << endl;
-			int new_mine = 0;
-			for (int i = 1; i <= x; i++) {
-				for (int j = 1; j <= y; j++) {
-					if (ui[i][j] == 9) { //current block is mine
-						if (uiStatus[i][j] != 2) { //current block is not flagged
-							if (flag_sum > 0) {
-								flag_sum--;
-								minesum_correct++;
-								minesum_user++;
-								uiStatus[i][j] = 2; //auto flag
-								new_mine++; //sum the number of new mines
-								cout << "mine position: " << i << ' ' << j << endl; //output mine position
-							}
-						}
-						Sleep(100);
-					}
-				}
-			}
-			cout << new_mine << " NEW mine(s) was(were) found\n";
-			cout << "output array?(y/n)" << ' ';
-			char ans;
-			cin >> ans;
-			if (ans == 'y') {
-				cout << "outputting...\n";
-				//cout<<minesum_correct<<' '<<minesum_user<<'\n';
-				Sleep(1000);
-				//system("cls");
-				coutArray(ui, x, y);
-			}
-			Sleep(1500);
-			cout << endl;
-		} else if (op == 't') {
-			print("tip-mode enabled", true);
-			int tempcnt = 0, flagcnt = 0;
-			for (int i = 1; i <= x; i++) {
-				for (int j = 1; j <= y; j++) {
-					if (ui[i][j] == 9) {
-						tempcnt++; //mine
-						if (uiStatus[i][j] == 2) flagcnt++; //mine&flagged
-					}
-				}
-			}
-			cout<<tempcnt<<" mine(s) are in the area you just input,and "<<flagcnt<<" of them is/are flagged\n";
-			Sleep(1200);
-		} else if(op=='f') {
-			for (int i = 1; i <= x; i++) {
-				for (int j = 1; j <= y; j++) {
-					if (uiStatus[i][j] == 2) {
-						if (ui[i][j] != 9) {
-							flag_sum++;
-							minesum_user--;
-							uiStatus[i][j] = 1; //auto open
-							cout << "fixed an incorrect flagged position: " << i << ' ' << j << endl;
-						}
-						Sleep(200);
-					}
-				}
-			}
 		} else {
 			print("invalid operator", true);
 			continue;
@@ -413,36 +357,6 @@ int main() {
 			string end;
 			cin >> end;
 			break;
-		}
-		if (wrAnalyze) {
-			if (ui[x][y] != 9 && uiStatus[x][y] != 2) {
-				currentUiNum = ui[x][y];
-				blankCnt = 0;
-				for (int i = 0; i < 8; i++) {
-					int targetX = x + facingsX[i];
-					int targetY = y + facingsY[i];
-					if (checkOutOfBorders(targetX,targetY)) continue;
-					if (uiStatus[targetX][targetY] == 0) blankCnt++;
-					if (uiStatus[targetX][targetY] == 2) currentUiNum--;
-				}
-				pm = currentUiNum / blankCnt;
-				pm *= 100;
-				if (pm == 100) {
-					for (int i = 0; i < 8; i++) {
-						int targetX = x + facingsX[i];
-						int targetY = y + facingsY[i];
-						if (checkOutOfBorders(targetX,targetY)) continue;
-						if (uiStatus[targetX][targetY] == 0) {
-							wrX[i] = targetX;
-							wrY[i] = targetY;
-						}
-					}
-				}
-			} else {
-				currentUiNum = 0;
-				blankCnt = 0;
-				pm = 0;
-			}
 		}
 	}
 	return 0;
