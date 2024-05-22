@@ -147,7 +147,7 @@ void coutSymbols(int array[105][105], int arrayStatus[105][105], int limitX, int
 
 	for (int i = 1; i <= limitX; i++) {
 		cout << endl << i << "  ";
-		for (int j = 1; j <= limitY; j++) { //statement of b[k][b]: =0 closed | =1 opened | =2 flagged	
+		for (int j = 1; j <= limitY; j++) { //statement of b[k][b]: =0 closed | =1 opened | =2 flagged
 			if (arrayStatus[i][j] == 0) {
 				cout << "#" << ' '; //closed
 			} else if (arrayStatus[i][j] == 1) {
@@ -158,7 +158,8 @@ void coutSymbols(int array[105][105], int arrayStatus[105][105], int limitX, int
 			}
 		}
 		//judge the status of the grid (opened, closed, flagged)
-	} cout << endl << "x\n";
+	}
+	cout << endl << "x\n";
 }
 
 void openEmptyAround(int x, int y) {
@@ -188,29 +189,40 @@ bool msWin() {
 void autoFlag(int ui[105][105], int uiStatus[105][105]) {
 	for (int i = 1; i <= row; i++) {
 		for (int j = 1; j <= column; j++) { //traverse every block
-			int currentNum = ui[i][j], tempNum = 0;
-			int flagTX[10] = {-1}, flagTY[10] = {-1};
-			for (int k = 0; k < 8; k++) { 
+			if (ui[i][j] == 0 || ui[i][j] == 9 || uiStatus[i][j] != 1) continue; //conditions: not blank, not a mine, not opened
+			int currentNum = ui[i][j];
+			int blankCnt = 0; //stores the number of blank blocks
+			int flagTX[8] = {-1}, flagTY[8] = {-1}; //stores flag position
+
+			for (int k = 0; k < 8; k++) { //traverse blocks around
 				int targetX = i + facingsX[k];
 				int targetY = j + facingsY[k];
 				if (checkOutOfBorders(targetX, targetY)) continue;
-				if (ui[targetX][targetY] == 0) continue;
-				if (uiStatus[targetX][targetY] == 0) {
-					tempNum++;
-					flagTX[k] = targetX;
-					flagTY[k] = targetY;
+
+				if (uiStatus[targetX][targetY] == 2) { //flagged
+					currentNum--;
+				} else if (uiStatus[targetX][targetY] == 0) { //closed
+					flagTX[blankCnt] = targetX; //record number
+					flagTY[blankCnt] = targetY;
+					blankCnt++; //blankCnt is index!
 				}
 			}
-			if (currentNum == tempNum) {
-				for (int i = 0; i < 10; i++) {
-					if (flagTX[i] != -1 && flagTY[i] != -1) {
-						uiStatus[flagTX[i]][flagTY[i]] = 2;
+
+			if (blankCnt > 0 && currentNum == blankCnt) {
+				for (int k = 0; k < blankCnt; k++) {
+					if (flagTX[k] != -1 && flagTY[k] != -1) { // && uiStatus[flagTX[k]][flagTY[k]] == 0 (not necessary)
+						uiStatus[flagTX[k]][flagTY[k]] = 2; //flag
+						flag_sum--;
+						minesum_correct++; minesum_user++;
 					}
 				}
 			}
 		}
 	}
 }
+
+
+
 
 int main() {
 	cout << "Working on ";
@@ -238,8 +250,8 @@ int main() {
 
 	while (row >= 30 || row <= 0 || column >= 30 || column <= 0 ||
 	        lives >= (row * column) || lives == 0 ||
-	        mine_sum >= (row * column) || mine_sum <= 0 || mine_sum == 1 || 
-			row * column - 1 == mine_sum) { //judge input data
+	        mine_sum >= (row * column) || mine_sum <= 0 || mine_sum == 1 ||
+	        row * column - 1 == mine_sum) { //judge input data
 		cout << "failed to process data, please reset map size/health/mine_sum\n";
 		cin >> row >> column >> lives >> mine_sum;
 	}
@@ -253,7 +265,7 @@ int main() {
 		}*/
 		//for debugging
 		coutSymbols(ui, uiStatus, row, column);
-		
+
 		cout << "HP: " << lives << ' ' << "Mines: " << mine_sum << '\n' << "Flags-Remaining: " << flag_sum << '\n';
 		string ops; //input operator
 		cin >> ops;
@@ -262,7 +274,7 @@ int main() {
 		string x1, y1;
 		cin >> x1 >> y1;
 		int x, y;//input coord
-		
+
 		while (!isNumber(x1) || !isNumber(y1) ||
 		        (op != 'q' && op != 'c' && op != 'p') ||
 		        stoi(x1) <= 0 || stoi(y1) <= 0 || (firstClick && op != 'q') ||
@@ -278,7 +290,7 @@ int main() {
 			generateMap(row, column, mine_sum, x, y, ui);
 			processAni(row, column); //play loading animation
 		}
-		
+
 		if (op == 'q') {
 			firstClick = false;
 			if (ui[x][y] == 9) {//losing
@@ -341,6 +353,7 @@ int main() {
 		}
 
 		if ((minesum_correct == mine_sum && minesum_correct == minesum_user) || msWin()) { //winning condition
+			coutArray(ui, row, column);
 			print("You Win!", false);
 			/*for(int i=1;i<=2;i++){
 			    system("color 1a");
