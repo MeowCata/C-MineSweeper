@@ -34,6 +34,7 @@ bool firstClick = true;
 int row, column; //map size
 int minesum_correct = 0, minesum_user = 0;
 int flag_sum;
+bool autoOpenEnabled = false;
 
 void print(string s, bool coutENDL) { //100% created originally
 	//getline(cin,s);
@@ -256,6 +257,10 @@ int main() {
 		cin >> row >> column >> lives >> mine_sum;
 	}
 	flag_sum = mine_sum;
+	cout << "enable autoFlag?(y/n)";
+	char ans;
+	cin >> ans;
+	if (ans == 'y') autoOpenEnabled = true;
 	print("preloading map...", true);
 
 	cout << '\n';
@@ -319,7 +324,7 @@ int main() {
 				uiStatus[x][y] = 1; //current block is opened
 				if (ui[x][y] == 0) openEmptyAround(x, y);
 				//determine if there are any blank squares around, and if there are, open them automatically
-				autoFlag(ui, uiStatus);
+				if (autoOpenEnabled) autoFlag(ui, uiStatus);
 			}
 		} else if (op == 'p') { //flagging
 			firstClick = false;
